@@ -52,18 +52,39 @@ A modern, feature-packed Tic-Tac-Toe web application featuring competition again
 
 ---
 
-## 💻 Running Locally
+## 💻 Running & Playing
 
-1. Open a terminal in `c:\hrudaykumar\tic tac toe`.
-2. Start the lightweight local server:
-   ```bash
-   node server.js
-   ```
-3. Open your browser and navigate to:
-   ```
-   http://localhost:3000
-   ```
-4. To run the automated test suite:
-   ```bash
-   node test-runner.js
-   ```
+### Option 1: 1-Click Launch (Offline & Standalone)
+Simply double-click:
+- **`Launch Game.bat`** (or double-click **`index.html`** directly)
+It opens in your default browser instantly with 0 dependencies and 0 setup.
+
+### Option 2: Local HTTP Server
+Run in PowerShell / Terminal:
+```bash
+node server.js
+```
+Then visit: `http://localhost:3000`
+
+---
+
+## 🌐 Pushing to GitHub & Publishing on GitHub Pages
+
+This project is 100% static, CORS-free, and automated for GitHub Pages with GitHub Actions!
+
+### Step 1: Link your GitHub Repository
+Create a new public or private repository on GitHub (e.g. `nexus-tic-tac-toe`), then run:
+```bash
+git remote add origin https://github.com/<YOUR_GITHUB_USERNAME>/<YOUR_REPO_NAME>.git
+git push -u origin main
+```
+
+### Step 2: Enable GitHub Pages
+1. Go to your repository on GitHub.
+2. Click **Settings** ➔ **Pages** (in the left sidebar).
+3. Under **Build and deployment** ➔ **Source**, select **GitHub Actions** (it will automatically use the included `.github/workflows/deploy.yml` workflow).
+4. That's it! In less than 60 seconds, your game is live globally at:
+   `https://<YOUR_GITHUB_USERNAME>.github.io/<YOUR_REPO_NAME>/`
+
+Anyone around the world who clicks the link can play immediately, challenge AI, invite online friends, track streaks, and enjoy visual match replays!
+
