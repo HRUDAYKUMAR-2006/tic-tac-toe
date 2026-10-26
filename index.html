@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexus Tic-Tac-Toe | AI, Offline & Online Multiplayer with Streaks</title>
+  <meta name="description" content="Experience modern Tic-Tac-Toe featuring unbeatable AI, offline 2-player pass & play, live online multiplayer rooms, match history with visual replays, and daily streak tracking.">
+  <meta name="keywords" content="tic tac toe, multiplayer game, ai tic tac toe, minimax, webrtc game, streak game, online game">
+
+  <!-- Modern Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+
+  <!-- PeerJS for WebRTC Multiplayer -->
+  <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+
+  <!-- Core Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Canvas Confetti Overlay -->
+  <canvas id="confettiCanvas"></canvas>
+
+  <!-- Notification Toast Container -->
+  <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+  <!-- Main Container -->
+  <div class="app-wrapper">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-left">
+        <div class="brand-logo" id="brandLogo">
+          <div class="brand-icon">
+            <span class="brand-x">✕</span>
+            <span class="brand-o">○</span>
+          </div>
+          <div class="brand-text">
+            <span class="brand-title">NEXUS</span>
+            <span class="brand-sub">TIC TAC TOE</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="header-center">
+        <!-- Daily Streak Widget -->
+        <button class="header-badge streak-badge" id="streakBadge" title="Click to view daily streak details">
+          <span class="badge-icon">🔥</span>
+          <span class="badge-text"><strong>1</strong> Day Streak</span>
+        </button>
+
+        <!-- Total Wins Widget -->
+        <button class="header-badge wins-badge" id="winsBadge" title="Click to view career stats">
+          <span class="badge-icon">🏆</span>
+          <span class="badge-text"><strong>0</strong> Wins</span>
+        </button>
+      </div>
+
+      <div class="header-right">
+        <!-- Sound Toggle -->
+        <button class="icon-btn" id="soundToggleBtn" title="Toggle Sound" aria-label="Toggle Sound">🔊</button>
+        
+        <!-- Match History -->
+        <button class="btn btn-ghost" id="historyBtn" title="View Previous Matches">
+          <span class="btn-icon">📜</span>
+          <span class="btn-label">History</span>
+        </button>
+
+        <!-- Share Button (Prompts Auth for Guests) -->
+        <button class="btn btn-share-header" id="shareHeaderBtn" title="Share your streak and invite friends">
+          <span class="btn-icon">🔗</span>
+          <span class="btn-label">Share</span>
+        </button>
+
+        <!-- User Profile / Auth Status Button -->
+        <button class="user-badge-btn" id="profileBtn" title="Account profile & settings">
+          <span class="avatar-icon">👤</span>
+          <span class="user-name">Guest</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Mode Selection Navigation Bar -->
+      <section class="mode-navigation" aria-label="Game Modes">
+        <div class="mode-pills-wrapper">
+          <button class="mode-btn active" data-mode="ai" id="modeAiBtn">
+            <span class="mode-icon">🤖</span>
+            <span class="mode-text">vs AI</span>
+          </button>
+          <button class="mode-btn" data-mode="offline" id="modeOfflineBtn">
+            <span class="mode-icon">👥</span>
+            <span class="mode-text">Offline Friends</span>
+          </button>
+          <button class="mode-btn" data-mode="online" id="modeOnlineBtn">
+            <span class="mode-icon">🌐</span>
+            <span class="mode-text">Online Friends</span>
+          </button>
+        </div>
+
+        <!-- AI Difficulty Dropdown (Visible only in vs AI mode) -->
+        <div class="ai-difficulty-wrapper" id="aiDifficultySelector">
+          <label for="aiDifficulty" class="diff-label">AI Difficulty:</label>
+          <select id="aiDifficulty" class="diff-select" aria-label="AI Difficulty Level">
+            <option value="easy">Casual (Easy)</option>
+            <option value="medium">Challenger (Medium)</option>
+            <option value="master" selected>Unbeatable (Master)</option>
+          </select>
+        </div>
+      </section>
+
+      <!-- Game Stage -->
+      <section class="game-stage">
+        <!-- Scoreboard / Matchup Header -->
+        <div class="scoreboard-card">
+          <!-- Player X Card -->
+          <div class="player-card player-x active-turn" id="playerCardX">
+            <div class="player-avatar-badge x-mark">✕</div>
+            <div class="player-meta">
+              <span class="player-label" id="playerXLabel">You (X)</span>
+              <span class="player-score" id="scoreX">0</span>
+            </div>
+            <div class="turn-spotlight"></div>
+          </div>
+
+          <!-- Match Status & Draws Badge -->
+          <div class="scoreboard-center">
+            <div class="draw-counter">
+              <span class="draw-label">TIES</span>
+              <span class="draw-value" id="scoreDraw">0</span>
+            </div>
+            <div class="status-indicator-badge" id="turnBanner">
+              <span class="turn-symbol-badge turn-x">X</span>
+              <strong>You (X)</strong>'s Turn
+            </div>
+          </div>
+
+          <!-- Player O Card -->
+          <div class="player-card player-o" id="playerCardO">
+            <div class="player-avatar-badge o-mark">○</div>
+            <div class="player-meta">
+              <span class="player-label" id="playerOLabel">AI (Master)</span>
+              <span class="player-score" id="scoreO">0</span>
+            </div>
+            <div class="turn-spotlight"></div>
+          </div>
+        </div>
+
+        <!-- Tic Tac Toe Interactive Board -->
+        <div class="board-container">
+          <div class="board-grid" id="gameBoard" role="grid" aria-label="Tic Tac Toe Board">
+            <!-- 9 Cells -->
+            <button class="board-cell" data-index="0" role="gridcell" aria-label="Cell 1"></button>
+            <button class="board-cell" data-index="1" role="gridcell" aria-label="Cell 2"></button>
+            <button class="board-cell" data-index="2" role="gridcell" aria-label="Cell 3"></button>
+            <button class="board-cell" data-index="3" role="gridcell" aria-label="Cell 4"></button>
+            <button class="board-cell" data-index="4" role="gridcell" aria-label="Cell 5"></button>
+            <button class="board-cell" data-index="5" role="gridcell" aria-label="Cell 6"></button>
+            <button class="board-cell" data-index="6" role="gridcell" aria-label="Cell 7"></button>
+            <button class="board-cell" data-index="7" role="gridcell" aria-label="Cell 8"></button>
+            <button class="board-cell" data-index="8" role="gridcell" aria-label="Cell 9"></button>
+
+            <!-- Winning Stroke SVG Line Overlay -->
+            <svg id="winningLineSvg" class="winning-line-overlay hidden" viewBox="0 0 100 100" preserveAspectRatio="none">
+            </svg>
+          </div>
+
+          <!-- Game Over Floating Announcement Banner -->
+          <div class="game-over-banner hidden" id="gameOverBanner">
+            <div class="banner-content">
+              <h3 class="banner-title" id="gameOverTitle">🎉 Winner!</h3>
+              <p class="banner-subtitle" id="gameOverSubtitle">Spectacular match played.</p>
+              <div class="banner-actions">
+                <button class="btn btn-primary" id="modalWinRestartBtn" onclick="document.getElementById('restartBtn').click()">Play Again</button>
+                <button class="btn btn-share" id="modalWinShareBtn">Share Win ✨</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Controls -->
+        <div class="board-actions">
+          <button class="btn btn-primary" id="restartBtn" title="Start a fresh match">
+            <span class="btn-icon">🔄</span>
+            <span>New Round</span>
+          </button>
+
+          <button class="btn btn-share-accent" id="gameShareBtn" title="Share match result or challenge friends">
+            <span class="btn-icon">✨</span>
+            <span>Share Challenge</span>
+          </button>
+
+          <button class="btn btn-secondary" id="resetScoresBtn" title="Clear current session scores">
+            <span class="btn-icon">0️⃣</span>
+            <span>Reset Scores</span>
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <!-- Modals Section -->
+
+    <!-- 1. Authentication Modal (Gated for sharing, completely unblocked for playing) -->
+    <div class="modal" id="authModal" role="dialog" aria-modal="true" aria-labelledby="authModalTitle">
+      <div class="modal-card">
+        <button class="modal-close-btn" data-close-modal="authModal" aria-label="Close modal">✕</button>
+        
+        <div class="modal-header">
+          <div class="modal-icon-badge">🔐</div>
+          <h2 class="modal-title" id="authModalTitle">Account Required to Share</h2>
+          <p class="modal-desc">
+            You can play freely as a guest without an account! To share game replays, daily streaks, and invite friends, please sign in or register below.
+          </p>
+        </div>
+
+        <!-- Auth Navigation Tabs -->
+        <div class="auth-tabs">
+          <button class="auth-tab active" data-tab="login" id="authTabLogin">Log In</button>
+          <button class="auth-tab" data-tab="register" id="authTabRegister">Create Account</button>
+        </div>
+
+        <div class="auth-forms-container">
+          <!-- Login Form -->
+          <form id="loginForm" class="auth-form">
+            <div class="form-group">
+              <label for="loginIdentifier">Username or Email</label>
+              <input type="text" id="loginIdentifier" class="form-input" placeholder="e.g. gamer99 or user@domain.com" required autocomplete="username">
+            </div>
+            <div class="form-group">
+              <label for="loginPassword">Password</label>
+              <input type="password" id="loginPassword" class="form-input" placeholder="Enter your password" required autocomplete="current-password">
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Log In & Continue</button>
+          </form>
+
+          <!-- Register Form -->
+          <form id="registerForm" class="auth-form hidden">
+            <div class="form-group">
+              <label for="registerName">Display Name</label>
+              <input type="text" id="registerName" class="form-input" placeholder="e.g. Alex Hunter" required>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="registerUsername">Username</label>
+                <input type="text" id="registerUsername" class="form-input" placeholder="gamer_pro" required autocomplete="username">
+              </div>
+              <div class="form-group">
+                <label for="registerEmail">Email</label>
+                <input type="email" id="registerEmail" class="form-input" placeholder="alex@gmail.com" required autocomplete="email">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="registerPassword">Password</label>
+              <input type="password" id="registerPassword" class="form-input" placeholder="Minimum 4 characters" required minlength="4" autocomplete="new-password">
+            </div>
+            <!-- Avatar Picker -->
+            <div class="form-group">
+              <label>Select Profile Avatar</label>
+              <div class="avatar-picker" id="avatarPicker">
+                <button type="button" class="avatar-option selected" data-avatar="⚡">⚡</button>
+                <button type="button" class="avatar-option" data-avatar="👑">👑</button>
+                <button type="button" class="avatar-option" data-avatar="🔥">🔥</button>
+                <button type="button" class="avatar-option" data-avatar="🚀">🚀</button>
+                <button type="button" class="avatar-option" data-avatar="🎯">🎯</button>
+                <button type="button" class="avatar-option" data-avatar="🐺">🐺</button>
+              </div>
+              <input type="hidden" id="registerAvatar" value="⚡">
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Create Account & Share</button>
+          </form>
+        </div>
+
+        <div class="modal-footer-guest">
+          <button type="button" class="btn btn-ghost" id="guestContinueBtn">
+            Continue Playing as Guest (Skip)
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Share & Invite Hub Modal -->
+    <div class="modal" id="shareModal" role="dialog" aria-modal="true" aria-labelledby="shareModalTitle">
+      <div class="modal-card">
+        <button class="modal-close-btn" data-close-modal="shareModal" aria-label="Close modal">✕</button>
+
+        <div class="modal-header">
+          <div class="modal-icon-badge">✨</div>
+          <h2 class="modal-title" id="shareModalTitle">Share Your Achievements</h2>
+          <p class="modal-desc">Challenge your friends or show off your unbeatable streak!</p>
+        </div>
+
+        <!-- Generated Visual Share Card Preview -->
+        <div class="share-card-preview" id="shareCardPreview">
+          <div class="share-card-header">
+            <span class="share-card-avatar" id="shareCardAvatar">⚡</span>
+            <div class="share-card-user">
+              <strong id="shareCardName">Player Name</strong>
+              <span class="verified-tag">Verified Contender</span>
+            </div>
+          </div>
+          <div class="share-card-stats">
+            <div class="share-stat-pill" id="shareCardStreak">🔥 1 Day Streak</div>
+            <div class="share-stat-pill" id="shareCardWins">🏆 0 Total Wins</div>
+            <div class="share-stat-pill" id="shareCardGames">🎮 0 Battles Fought</div>
+          </div>
+          <div class="share-card-branding">
+            <span>Play on Nexus Tic Tac Toe</span>
+          </div>
+        </div>
+
+        <!-- Share URL with 1-click Copy -->
+        <div class="share-link-group">
+          <label for="shareUrlInput" class="form-label">Game Link</label>
+          <div class="input-with-button">
+            <input type="text" id="shareUrlInput" class="form-input" readonly value="">
+            <button class="btn btn-primary" id="copyShareUrlBtn">Copy Link</button>
+          </div>
+        </div>
+
+        <!-- Social Share Quick Links -->
+        <div class="share-actions-grid">
+          <button class="btn btn-social" id="webShareNativeBtn">
+            <span class="social-icon">📱</span>
+            <span>Native Share</span>
+          </button>
+          <button class="btn btn-social" id="shareWhatsAppBtn">
+            <span class="social-icon">💬</span>
+            <span>WhatsApp</span>
+          </button>
+          <button class="btn btn-social" id="shareTwitterBtn">
+            <span class="social-icon">🐦</span>
+            <span>X / Twitter</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Match History Modal & Previous Matches Ledger -->
+    <div class="modal" id="historyModal" role="dialog" aria-modal="true" aria-labelledby="historyModalTitle">
+      <div class="modal-card modal-card-lg">
+        <button class="modal-close-btn" data-close-modal="historyModal" aria-label="Close modal">✕</button>
+
+        <div class="modal-header">
+          <div class="modal-icon-badge">📜</div>
+          <h2 class="modal-title" id="historyModalTitle">Previous Matches Data</h2>
+          <p class="modal-desc">Inspect your past battles, check match details, and watch move-by-move replays.</p>
+        </div>
+
+        <!-- Filter Pills & Clear -->
+        <div class="history-controls-bar">
+          <div class="filter-pills">
+            <button class="history-filter-btn active" data-filter="all">All</button>
+            <button class="history-filter-btn" data-filter="ai">vs AI</button>
+            <button class="history-filter-btn" data-filter="offline">Offline 2P</button>
+            <button class="history-filter-btn" data-filter="online">Online</button>
+          </div>
+          <button class="btn btn-danger-ghost btn-sm" id="clearHistoryBtn">Clear Ledger</button>
+        </div>
+
+        <!-- Matches Scrollable List -->
+        <div class="history-list" id="historyList">
+          <!-- Populated dynamically by UI manager -->
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Interactive Move-by-Move Replay Modal -->
+    <div class="modal" id="replayModal" role="dialog" aria-modal="true" aria-labelledby="replayTitle">
+      <div class="modal-card">
+        <button class="modal-close-btn" data-close-modal="replayModal" aria-label="Close modal">✕</button>
+
+        <div class="modal-header">
+          <div class="modal-icon-badge">▶</div>
+          <h2 class="modal-title" id="replayTitle">Match Replay</h2>
+          <p class="modal-desc" id="replayInfo">Move by move recreation</p>
+        </div>
+
+        <!-- Mini 3x3 Replay Board -->
+        <div class="replay-board-wrapper">
+          <div class="replay-board" id="replayBoard">
+            <!-- 9 Replay cells populated dynamically -->
+          </div>
+        </div>
+
+        <!-- Replay Playback Controls -->
+        <div class="replay-controls">
+          <div class="replay-step-label" id="replayStepLabel">Move 0 of 0</div>
+          <div class="replay-buttons">
+            <button class="btn btn-secondary btn-sm" id="replayPrevBtn">⏮ Previous</button>
+            <button class="btn btn-primary btn-sm" id="replayPlayBtn">⏸ Pause</button>
+            <button class="btn btn-secondary btn-sm" id="replayNextBtn">Next ⏭</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. Daily Streak Details Modal -->
+    <div class="modal" id="streakModal" role="dialog" aria-modal="true" aria-labelledby="streakModalTitle">
+      <div class="modal-card">
+        <button class="modal-close-btn" data-close-modal="streakModal" aria-label="Close modal">✕</button>
+
+        <div class="modal-header">
+          <div class="modal-icon-badge">🔥</div>
+          <h2 class="modal-title" id="streakModalTitle">Daily Streak Status</h2>
+          <p class="modal-desc">Play every day to keep your streak burning and claim bragging rights!</p>
+        </div>
+
+        <div class="streak-hero-card">
+          <div class="streak-hero-count" id="streakModalCount">1</div>
+          <div class="streak-hero-label">Consecutive Days</div>
+        </div>
+
+        <!-- 7-Day Flame Calendar -->
+        <div class="streak-calendar-wrapper">
+          <h4 class="calendar-heading">Last 7 Days Activity</h4>
+          <div class="streak-week-calendar" id="streakWeekCalendar">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+
+        <div class="streak-records-grid">
+          <div class="record-box">
+            <span class="record-title">Personal Best Streak</span>
+            <strong class="record-val" id="streakModalBest">1</strong>
+          </div>
+          <div class="record-box">
+            <span class="record-title">Total Battles Played</span>
+            <strong class="record-val" id="streakModalTotal">0</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. Career Statistics Modal -->
+    <div class="modal" id="statsModal" role="dialog" aria-modal="true" aria-labelledby="statsModalTitle">
+      <div class="modal-card">
+        <button class="modal-close-btn" data-close-modal="statsModal" aria-label="Close modal">✕</button>
+
+        <div class="modal-header">
+          <div class="modal-icon-badge">🏆</div>
+          <h2 class="modal-title" id="statsModalTitle">Career Statistics</h2>
+          <p class="modal-desc">Comprehensive record of all your games and win ratios.</p>
+        </div>
+
+        <div class="stats-overview-grid">
+          <div class="stat-card win-stat">
+            <span class="stat-num" id="statWins">0</span>
+            <span class="stat-lbl">Victories</span>
+          </div>
+          <div class="stat-card loss-stat">
+            <span class="stat-num" id="statLosses">0</span>
+            <span class="stat-lbl">Defeats</span>
+          </div>
+          <div class="stat-card draw-stat">
+            <span class="stat-num" id="statDraws">0</span>
+            <span class="stat-lbl">Draws</span>
+          </div>
+          <div class="stat-card rate-stat">
+            <span class="stat-num" id="statWinRate">0%</span>
+            <span class="stat-lbl">Win Rate</span>
+          </div>
+        </div>
+
+        <div class="breakdown-list">
+          <div class="breakdown-row">
+            <span>Total Games Fought</span>
+            <strong id="statTotalGames">0</strong>
+          </div>
+          <div class="breakdown-row">
+            <span>Wins vs AI Engine</span>
+            <strong id="statAiWins">0</strong>
+          </div>
+          <div class="breakdown-row">
+            <span>Wins in Offline 2-Player</span>
+            <strong id="statOfflineWins">0</strong>
+          </div>
+          <div class="breakdown-row">
+            <span>Wins in Online Multiplayer</span>
+            <strong id="statOnlineWins">0</strong>
+          </div>
+          <div class="breakdown-row">
+            <span>All-time Best Streak</span>
+            <strong id="statBestStreak">1</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7. Online Friends Multiplayer Hub Modal -->
+    <div class="modal" id="onlineModal" role="dialog" aria-modal="true" aria-labelledby="onlineModalTitle">
+      <div class="modal-card">
+        <button class="modal-close-btn" data-close-modal="onlineModal" aria-label="Close modal">✕</button>
+
+        <div class="modal-header">
+          <div class="modal-icon-badge">🌐</div>
+          <h2 class="modal-title" id="onlineModalTitle">Online Friends Battle</h2>
+          <p class="modal-desc">Play in real-time with friends on different devices or browser tabs via WebRTC!</p>
+        </div>
+
+        <!-- Online Tabs (Host vs Join) -->
+        <div class="auth-tabs">
+          <button class="online-tab active" data-tab="host">Host Game</button>
+          <button class="online-tab" data-tab="join">Join Game</button>
+        </div>
+
+        <!-- Host Content -->
+        <div class="online-tab-content" id="onlineHostContent">
+          <div class="room-host-box">
+            <p class="instruction-text">Click below to generate a private room and invite code:</p>
+            <button class="btn btn-primary btn-block" id="createRoomBtn">Host New Room</button>
+
+            <div class="room-created-details hidden" id="roomCreatedSection">
+              <div class="room-code-badge">
+                <span class="code-label">Room Code:</span>
+                <span class="code-value" id="roomCodeDisplay">------</span>
+              </div>
+
+              <div class="input-with-button">
+                <input type="text" id="roomLinkInput" class="form-input" readonly value="">
+                <button class="btn btn-secondary" id="copyRoomLinkBtn">Copy Link</button>
+              </div>
+
+              <div class="waiting-indicator">
+                <span class="thinking-spinner"></span>
+                <span>Waiting for friend to join... You will play as <strong>X</strong>.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Join Content -->
+        <div class="online-tab-content hidden" id="onlineJoinContent">
+          <div class="form-group">
+            <label for="joinRoomCodeInput">Enter 6-Character Room Code</label>
+            <input type="text" id="joinRoomCodeInput" class="form-input text-uppercase" placeholder="e.g. ABC123" maxlength="8">
+          </div>
+          <button class="btn btn-primary btn-block" id="joinRoomBtn">Join Room & Fight</button>
+          <p class="form-hint">Tip: If a friend sent you a direct link with <code>#room=...</code>, it fills automatically!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8. User Profile Modal -->
+    <div class="modal" id="profileModal" role="dialog" aria-modal="true" aria-labelledby="profileModalTitle">
+      <div class="modal-card">
+        <button class="modal-close-btn" data-close-modal="profileModal" aria-label="Close modal">✕</button>
+
+        <div class="modal-header">
+          <div class="profile-avatar-large" id="profileAvatarDisplay">⚡</div>
+          <h2 class="modal-title" id="profileNameDisplay">Gamer</h2>
+          <p class="modal-desc" id="profileUsernameDisplay">@username</p>
+          <p class="profile-meta-line" id="profileEmailDisplay">user@email.com</p>
+          <p class="profile-meta-sub" id="profileJoinedDisplay">Member since Oct 2026</p>
+        </div>
+
+        <div class="profile-stats-summary" id="profileStatsSummary">
+          <!-- Populated dynamically -->
+        </div>
+
+        <div class="profile-actions">
+          <button class="btn btn-danger-ghost btn-block" id="logoutBtn">Log Out</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Core Script (Runs anywhere: file://, GitHub Pages, or HTTP servers) -->
+  <script src="bundle.js"></script>
+</body>
+</html>
