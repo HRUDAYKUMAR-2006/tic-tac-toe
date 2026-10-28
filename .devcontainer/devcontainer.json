@@ -1,0 +1,12 @@
+{
+  "name": "Nexus Tic-Tac-Toe",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:20",
+  "forwardPorts": [3000],
+  "portsAttributes": {
+    "3000": {
+      "label": "Nexus Tic-Tac-Toe Game",
+      "onAutoForward": "openBrowser"
+    }
+  },
+  "postStartCommand": "npm start"
+}

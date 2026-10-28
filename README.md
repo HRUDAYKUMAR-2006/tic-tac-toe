@@ -1,6 +1,20 @@
-# Nexus Tic-Tac-Toe
+# 🎮 Nexus Tic-Tac-Toe
 
-A modern, feature-packed Tic-Tac-Toe web application featuring competition against AI, offline friends, and online friends, complete with match history & move-by-move replays, daily streak tracking, career statistics, Web Audio API sound synthesis, and account-gated sharing while maintaining 100% free guest play.
+[![Deploy to GitHub Pages](https://github.com/OWNER/REPO/actions/workflows/deploy.yml/badge.svg)](https://github.com/OWNER/REPO/actions/workflows/deploy.yml)
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/OWNER/REPO)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
+> **Experience modern Tic-Tac-Toe featuring unbeatable AI (Minimax), offline 2-player pass & play, live WebRTC online multiplayer rooms, match history with visual step-by-step replays, daily streak tracking, and Web Audio sound synthesizer.**
+
+---
+
+## 🌟 Instant Play & Run Options
+
+| Method | Description | Link |
+| :--- | :--- | :--- |
+| 🌐 **GitHub Pages (Web)** | Play directly in your browser on phone, tablet, or desktop with 0 installation | **[Play Live Web App](https://OWNER.github.io/REPO/)** |
+| ☁️ **GitHub Codespaces** | Launch full cloud development environment & auto-run server with 1-click | **[Open in Codespaces](https://codespaces.new/OWNER/REPO)** |
+| 💻 **Local / Offline** | Double-click `Launch Game.bat` or open `index.html` | Runs completely offline |
 
 ---
 
@@ -8,83 +22,112 @@ A modern, feature-packed Tic-Tac-Toe web application featuring competition again
 
 ### 1. Game Modes
 - **🤖 vs AI**:
-  - **Casual (Easy)**: Random relaxed moves.
-  - **Challenger (Medium)**: Tactical moves with human-like heuristics.
-  - **Unbeatable (Master)**: Pure Minimax algorithm with depth weighting — mathematically impossible to defeat!
-  - Realistic "AI is calculating optimal move..." status with realistic thinking delay.
+  - **Casual (Easy)**: Relaxed, randomized moves.
+  - **Challenger (Medium)**: Tactical heuristics with occasional defensive blocks.
+  - **Unbeatable (Master)**: Pure Minimax algorithm with depth-weighting — mathematically impossible to defeat!
+  - Realistic "AI is calculating optimal move..." status indicator.
 - **👥 Offline Friends**:
   - Pass & Play on the same screen with dynamic player spotlights and turn indicators.
 - **🌐 Online Friends**:
   - Real-time peer-to-peer multiplayer using WebRTC (PeerJS) with BroadcastChannel fallback for multi-tab testing.
-  - Room generation with 6-character codes (e.g. `ABC123`) and shareable direct URLs (`#room=...`).
+  - 6-character room codes (e.g. `ABC123`) and shareable direct URLs (`#room=...`).
   - Move synchronization and rematch requests.
 
 ### 2. Daily Streak & Career Wins Tracking
 - **🔥 Daily Streak**:
-  - Tracks consecutive days played.
-  - Interactive 7-Day Flame Calendar modal showing activity over the past week and all-time best streak.
-- **🏆 Total Wins & Statistics**:
-  - Career ledger displaying Total Battles, Wins, Losses, Draws, and Win Rate %.
-  - Breakdown by mode: AI victories, Offline 2P victories, Online victories.
+  - Tracks consecutive days played using local storage.
+  - Interactive 7-Day Flame Calendar modal showing past week activity and all-time best streak record.
+- **🏆 Total Wins & Career Stats**:
+  - Complete career ledger displaying Total Battles, Wins, Losses, Draws, and Win Rate %.
+  - Breakdown by game mode: AI victories, Offline 2P victories, Online victories.
 
-### 3. Previous Matches Data & Interactive Replays
-- Detailed match history ledger logging mode, winner, player names, duration in seconds, and moves count.
+### 3. Previous Matches & Visual Replay Engine
+- Match history logging mode, winner, player names, battle duration, and moves sequence.
 - **▶ Visual Replay Engine**:
   - Select any past match to launch a move-by-move interactive board replay.
-  - Controls include Play/Pause, Step Backward, Step Forward, and Move indicators.
+  - Controls include Play/Pause, Step Backward, Step Forward, and move counters.
 - Filter matches by mode (All, AI, Offline, Online) or clear history.
 
-### 4. Account-Gated Sharing with Unrestricted Guest Play
-- **Unrestricted Guest Play**: Users can immediately play any game mode without logging in or signing up.
+### 4. Account-Gated Sharing with Free Guest Play
+- **Unrestricted Guest Play**: Users can immediately play any mode without logging in.
 - **Sharing Gate**:
-  - Clicking any "Share" button (`Header`, `In-Game`, or `Post-Match`) as a guest displays the **"Account Required to Share"** modal.
-  - Allows the user to **Log In** to an existing account or **Create a New Account** (with custom display name, username, email, password, and avatar selection).
+  - Guest users clicking "Share" can Log In or Register (with custom avatar, username, and email).
   - Includes a "Continue Playing as Guest" skip option.
-  - Upon logging in or registering, automatically transitions into the **Share Hub** with a personalized Share Card, 1-click clipboard copy, and links for Native Web Share, WhatsApp, and X/Twitter.
+  - Authenticated players receive a personalized Share Card, 1-click clipboard copy, and direct links for Web Share, WhatsApp, and X/Twitter.
 
-### 5. Rich Aesthetics & Tactile Feedback
-- Modern glassmorphism UI with dark cosmic background and subtle animated grid.
-- Neon Cyan (`#00f5d4`) for X, Electric Magenta (`#ff007f`) for O, and Warm Gold Amber (`#ffd166`) for Streaks & Trophies.
-- Interactive phantom mark hover preview on board cells.
-- Dynamic animated SVG winning strike line overlay.
-- Web Audio API custom synthesizer for moves, chimes, victory fanfare, and draw chords (with mute toggle).
-- Fullscreen canvas confetti celebration on win.
+### 5. Glassmorphism Aesthetics & Web Audio
+- Dark cosmic background with animated glow grid.
+- Neon Cyan (`#00f5d4`) for X, Electric Magenta (`#ff007f`) for O, Warm Amber (`#ffd166`) for Streaks.
+- Interactive phantom mark hover previews on board cells.
+- Dynamic animated SVG winning strike line.
+- Web Audio API custom synthesizer (moves, victory fanfare, draw chords, mute toggle).
+- Fullscreen canvas confetti celebration on victory.
 
 ---
 
-## 💻 Running & Playing
+## 📢 How to Publish on GitHub (So Anyone Can Click & Play)
 
-### Option 1: 1-Click Launch (Offline & Standalone)
-Simply double-click:
-- **`Launch Game.bat`** (or double-click **`index.html`** directly)
-It opens in your default browser instantly with 0 dependencies and 0 setup.
+This repository includes an automated GitHub Actions workflow (`.github/workflows/deploy.yml`) that builds and publishes your game to GitHub Pages automatically whenever you push.
 
-### Option 2: Local HTTP Server
-Run in PowerShell / Terminal:
+### Step 1: Create a Repository on GitHub
+1. Go to [github.com/new](https://github.com/new).
+2. Enter a repository name (e.g. `nexus-tic-tac-toe` or `tic-tac-toe`).
+3. Choose **Public** (so anyone can view and play it).
+4. Click **Create repository**.
+
+### Step 2: Push Your Code
+Open your terminal in this project directory and run:
 ```bash
-node server.js
+git remote add origin https://github.com/<YOUR_GITHUB_USERNAME>/<YOUR_REPO_NAME>.git
+git branch -M main
+git push -u origin main
+```
+*(Replace `<YOUR_GITHUB_USERNAME>` and `<YOUR_REPO_NAME>` with your actual GitHub username and repository name).*
+
+### Step 3: Enable GitHub Pages in 1 Click
+1. In your GitHub repository, click **Settings** (top tab bar).
+2. Click **Pages** in the left sidebar menu.
+3. Under **Build and deployment** ➔ **Source**, select **GitHub Actions**.
+4. That's it! GitHub Actions will run automatically. In about 30 seconds, your game is live at:
+   ```
+   https://<YOUR_GITHUB_USERNAME>.github.io/<YOUR_REPO_NAME>/
+   ```
+
+### Step 4: Add the Live Link to Your Repository Header
+To make it effortlessly clickable right on your GitHub repo's homepage:
+1. Go to the front page of your repository.
+2. In the right-hand sidebar under **About**, click the ⚙️ gear icon.
+3. Check the box for **Use your GitHub Pages website** (or paste your Pages URL).
+4. Click **Save changes**. Now a clickable link will be shown prominently to every visitor!
+
+---
+
+## 💻 Local Development
+
+### 1-Click Offline Launch
+Double-click:
+- **`Launch Game.bat`** (or open **`index.html`** in any web browser)
+
+### Local Node.js Server
+```bash
+npm start
+# or: node server.js
 ```
 Then visit: `http://localhost:3000`
 
----
-
-## 🌐 Pushing to GitHub & Publishing on GitHub Pages
-
-This project is 100% static, CORS-free, and automated for GitHub Pages with GitHub Actions!
-
-### Step 1: Link your GitHub Repository
-Create a new public or private repository on GitHub (e.g. `nexus-tic-tac-toe`), then run:
+### Run Test Suite
 ```bash
-git remote add origin https://github.com/<YOUR_GITHUB_USERNAME>/<YOUR_REPO_NAME>.git
-git push -u origin main
+npm test
+# or: node test-runner.js
 ```
 
-### Step 2: Enable GitHub Pages
-1. Go to your repository on GitHub.
-2. Click **Settings** ➔ **Pages** (in the left sidebar).
-3. Under **Build and deployment** ➔ **Source**, select **GitHub Actions** (it will automatically use the included `.github/workflows/deploy.yml` workflow).
-4. That's it! In less than 60 seconds, your game is live globally at:
-   `https://<YOUR_GITHUB_USERNAME>.github.io/<YOUR_REPO_NAME>/`
+### Rebuild Bundle (if editing modules in `/js`)
+```bash
+npm run build
+# or: node build.js
+```
 
-Anyone around the world who clicks the link can play immediately, challenge AI, invite online friends, track streaks, and enjoy visual match replays!
+---
 
+## 📄 License
+This project is open-source and available under the [MIT License](LICENSE).

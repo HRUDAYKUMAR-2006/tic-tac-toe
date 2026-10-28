@@ -1,0 +1,21 @@
+{
+  "name": "nexus-tic-tac-toe",
+  "version": "1.0.0",
+  "description": "Modern Tic-Tac-Toe with AI, Offline & Online WebRTC Multiplayer, Daily Streaks, and Match Replays",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node test-runner.js",
+    "build": "node build.js"
+  },
+  "keywords": [
+    "tic-tac-toe",
+    "multiplayer",
+    "webrtc",
+    "minimax",
+    "game",
+    "streaks"
+  ],
+  "author": "Hruday Kumar",
+  "license": "MIT"
+}
