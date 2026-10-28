@@ -1,15 +1,13 @@
 @echo off
-title Publish Nexus Tic-Tac-Toe to GitHub
+title Publish Tic-Tac-Toe to GitHub
 cd /d "%~dp0"
 echo ==============================================
-echo Publishing Tic-Tac-Toe to GitHub
+echo Pushing Tic-Tac-Toe to GitHub
 echo Account: HRUDAYKUMAR-2006
 echo Repo:    tic-tac-toe
 echo ==============================================
 echo.
-echo Running git push...
-git push -u origin main --force > push.log 2>&1
-type push.log
+git push -u origin main
 echo.
 if %errorlevel% equ 0 (
     echo ==============================================
@@ -25,7 +23,8 @@ if %errorlevel% equ 0 (
 ) else (
     echo.
     echo ==============================================
-    echo Push did not succeed. Check push.log above.
+    echo Push did not complete. If prompted above,
+    echo sign in to your GitHub account to authorize.
     echo ==============================================
 )
 echo.
