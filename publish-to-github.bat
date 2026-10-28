@@ -7,8 +7,9 @@ echo Account: HRUDAYKUMAR-2006
 echo Repo:    tic-tac-toe
 echo ==============================================
 echo.
-echo Syncing and pushing files to GitHub...
-git push -u origin main --force
+echo Running git push...
+git push -u origin main --force > push.log 2>&1
+type push.log
 echo.
 if %errorlevel% equ 0 (
     echo ==============================================
@@ -23,8 +24,9 @@ if %errorlevel% equ 0 (
     echo https://hrudaykumar-2006.github.io/tic-tac-toe/
 ) else (
     echo.
-    echo An error occurred during push.
-    echo If GitHub asks you to sign in, please authorize the window.
+    echo ==============================================
+    echo Push did not succeed. Check push.log above.
+    echo ==============================================
 )
 echo.
 pause
