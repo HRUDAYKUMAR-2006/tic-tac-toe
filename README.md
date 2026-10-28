@@ -1,7 +1,7 @@
 # 🎮 Nexus Tic-Tac-Toe
 
-[![Deploy to GitHub Pages](https://github.com/OWNER/REPO/actions/workflows/deploy.yml/badge.svg)](https://github.com/OWNER/REPO/actions/workflows/deploy.yml)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/OWNER/REPO)
+[![Deploy to GitHub Pages](https://github.com/HRUDAYKUMAR-2006/nexus-tic-tac-toe/actions/workflows/deploy.yml/badge.svg)](https://github.com/HRUDAYKUMAR-2006/nexus-tic-tac-toe/actions/workflows/deploy.yml)
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/HRUDAYKUMAR-2006/nexus-tic-tac-toe)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 > **Experience modern Tic-Tac-Toe featuring unbeatable AI (Minimax), offline 2-player pass & play, live WebRTC online multiplayer rooms, match history with visual step-by-step replays, daily streak tracking, and Web Audio sound synthesizer.**
@@ -12,8 +12,8 @@
 
 | Method | Description | Link |
 | :--- | :--- | :--- |
-| 🌐 **GitHub Pages (Web)** | Play directly in your browser on phone, tablet, or desktop with 0 installation | **[Play Live Web App](https://OWNER.github.io/REPO/)** |
-| ☁️ **GitHub Codespaces** | Launch full cloud development environment & auto-run server with 1-click | **[Open in Codespaces](https://codespaces.new/OWNER/REPO)** |
+| 🌐 **GitHub Pages (Web)** | Play directly in your browser on phone, tablet, or desktop with 0 installation | **[Play Live Web App](https://hrudaykumar-2006.github.io/nexus-tic-tac-toe/)** |
+| ☁️ **GitHub Codespaces** | Launch full cloud development environment & auto-run server with 1-click | **[Open in Codespaces](https://codespaces.new/HRUDAYKUMAR-2006/nexus-tic-tac-toe)** |
 | 💻 **Local / Offline** | Double-click `Launch Game.bat` or open `index.html` | Runs completely offline |
 
 ---
@@ -78,11 +78,10 @@ This repository includes an automated GitHub Actions workflow (`.github/workflow
 ### Step 2: Push Your Code
 Open your terminal in this project directory and run:
 ```bash
-git remote add origin https://github.com/<YOUR_GITHUB_USERNAME>/<YOUR_REPO_NAME>.git
+git remote add origin https://github.com/HRUDAYKUMAR-2006/nexus-tic-tac-toe.git
 git branch -M main
 git push -u origin main
 ```
-*(Replace `<YOUR_GITHUB_USERNAME>` and `<YOUR_REPO_NAME>` with your actual GitHub username and repository name).*
 
 ### Step 3: Enable GitHub Pages in 1 Click
 1. In your GitHub repository, click **Settings** (top tab bar).
